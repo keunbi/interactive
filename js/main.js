@@ -22,9 +22,14 @@
                 messageA : document.querySelector('#scroll-section-0 .main-message.a'),
                 messageB : document.querySelector('#scroll-section-0 .main-message.b'),
                 messageC : document.querySelector('#scroll-section-0 .main-message.c'),
-                messageD : document.querySelector('#scroll-section-0 .main-message.d')
+                messageD : document.querySelector('#scroll-section-0 .main-message.d'),
+                canvas: document.querySelector('#video-canvas-0'),
+				context: document.querySelector('#video-canvas-0').getContext('2d'),
+				videoImages: [] //이미지 시퀀스 수백장을 넣어줄 것
             },
             values: {
+                videoImageCount : 300,
+                imageSequence : [0, 299],  //0~299까지 이미지 바뀌면 됨
                 messageA_opacity_in: [0, 1, { start: 0.1, end: 0.2 }],
                 //시작값, 끝값, 객체로 애니메이션이 시작되는 구간넣어줌
                 // 시작되는 구간은 비율로 계산해서 소수점으로 넣어줌 (구간 전체를 1로봄)
@@ -101,6 +106,19 @@
             }
         }
     ];
+
+
+
+    function setCanvasImages(){ 
+        let imgElem;
+        for(let i = 0; i < sceneInfo[0].values.videoImageCount; i++){
+            imgElem = new Image(); //이미지 객체 만듬
+            //imgElem = document.createElement('img') 이렇게 해줘도됨
+            imgElem.src = `./video/001/IMG_${6726 + i}.JPG`
+            sceneInfo[0].objs.videoImages.push(imgElem);
+        }
+        
+    }
 
     function setLayout(){
         // 각 스크롤 섹션의 높이 세팅
@@ -188,6 +206,10 @@
 
         switch (currentScene){
             case 0: //첫번째 씬
+
+                let sequence = Math.round(calcValues(values.imageSequence, currentYOffset));
+                objs.context.drawImage(objs.videoImages[sequence],0,0);
+
                 if(scrollRatio <= 0.22){
                     //in
                     objs.messageA.style.opacity = calcValues(values.messageA_opacity_in,currentYOffset);
@@ -310,5 +332,7 @@
         yOffset = window.pageYOffset; //현재 스크롤 위치
         scrollLoop();
     })
+    
+    setCanvasImages();
     
 })();
